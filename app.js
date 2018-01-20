@@ -1,4 +1,9 @@
 var express = require('express');
+const session = require('express-session');
+const chalk = require('chalk');
+const MongoStore = require('connect-mongo')(session);
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -8,7 +13,26 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
+/**
+ * Load environment variables from .env file, where API keys and passwords are configured.
+ */
+dotenv.load({ path: '.env.example' });
+
+/**
+ * Create Express server.
+ */
 var app = express();
+
+/**
+ * Connect to MongoDB.
+ */
+mongoose.Promise = global.Promise;
+mongoose.connect(process.env.MONGODB_URI || process.env.MONGOLAB_URI);
+mongoose.connection.on('error', (err) => {
+  console.error(err);
+  console.log('%s MongoDB connection error. Please make sure MongoDB is running.', chalk.red('✗'));
+  process.exit();
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

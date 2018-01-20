@@ -9,6 +9,7 @@ This README would normally document whatever steps are necessary to get your app
 
 ### How do I get set up? ###
 
+* Install NODEJS Version 8x for this project.
 * Take pull of this repo or clone this repo and run the command `npm install`
 * This project uses MongoDB as Database and database name is `hellomeets_workshop`
 * Dependencies: List of packages needed is alread available in `package.json`
