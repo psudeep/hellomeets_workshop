@@ -9,6 +9,8 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+const expressValidator = require('express-validator');
+const passport = require('passport');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -27,12 +29,9 @@ var app = express();
  * Connect to MongoDB.
  */
 mongoose.Promise = global.Promise;
-mongoose.connect(process.env.MONGODB_URI || process.env.MONGOLAB_URI);
-mongoose.connection.on('error', (err) => {
-  console.error(err);
-  console.log('%s MongoDB connection error. Please make sure MongoDB is running.', chalk.red('✗'));
-  process.exit();
-});
+mongoose.connect(process.env.MONGODB_URI || process.env.MONGOLAB_URI)
+  .then(() =>  console.log('connection succesful'))
+  .catch((err) => console.error('%s MongoDB connection error. Please make sure MongoDB is running.', chalk.red('✗')));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -45,7 +44,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(expressValidator());
+app.use(passport.initialize());
+app.use(passport.session());
 app.use('/', routes);
 app.use('/users', users);
 
